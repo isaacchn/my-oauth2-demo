@@ -1,0 +1,12 @@
+#oauth2-client
+server:
+  port: 8080
+security:
+  oauth2:
+    client:
+      client-id: webapp
+      client-secret: secret
+      access-token-uri: http://localhost:8081/ouath/token
+      user-authorization-uri: http://localhost:8081/oauth/authorize
+    resource:
+      user-info-uri: http://localhost:8081/oauth/user
