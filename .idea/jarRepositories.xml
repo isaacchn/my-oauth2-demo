@@ -2,14 +2,29 @@
 <project version="4">
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
+      <option name="id" value="nexus-releases" />
+      <option name="name" value="nexus-releases" />
+      <option name="url" value="http://47.104.201.245:8084/nexus/repository/maven-releases/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="nexus-public" />
+      <option name="name" value="nexus-public" />
+      <option name="url" value="http://47.104.201.245:8084/nexus/repository/maven-public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="aliyun" />
+      <option name="name" value="aliyun" />
+      <option name="url" value="https://maven.aliyun.com/repository/central" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="spring-snapshot" />
+      <option name="name" value="Spring Snapshot Repository" />
+      <option name="url" value="https://repo.spring.io/snapshot" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="https://repo.maven.apache.org/maven2" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="aliyun-public" />
-      <option name="name" value="aliyun-public" />
-      <option name="url" value="https://maven.aliyun.com/repository/public" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />
@@ -17,19 +32,19 @@
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="nexus-releases" />
-      <option name="name" value="nexus-releases" />
-      <option name="url" value="http://47.104.201.245:8084/nexus/repository/maven-releases/" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="jboss.community" />
-      <option name="name" value="JBoss Community repository" />
-      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="nexus-public" />
-      <option name="name" value="nexus-public" />
+      <option name="id" value="ldsk-nexus" />
+      <option name="name" value="ldsk-nexus" />
       <option name="url" value="http://47.104.201.245:8084/nexus/repository/maven-public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="spring-repo" />
+      <option name="name" value="Spring Release Repository" />
+      <option name="url" value="https://repo.spring.io/release" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="aliyun-public" />
+      <option name="name" value="aliyun-public" />
+      <option name="url" value="https://maven.aliyun.com/repository/public" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="nexus-snapshots" />
@@ -40,6 +55,11 @@
       <option name="id" value="aliyun-spring" />
       <option name="name" value="aliyun-spring" />
       <option name="url" value="https://maven.aliyun.com/repository/spring" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jboss.community" />
+      <option name="name" value="JBoss Community repository" />
+      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
   </component>
 </project>
