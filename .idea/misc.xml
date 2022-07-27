@@ -14,6 +14,7 @@
       <set>
         <option value="$PROJECT_DIR$/oauth2-client/pom.xml" />
         <option value="$PROJECT_DIR$/oauth2-server/pom.xml" />
+        <option value="$PROJECT_DIR$/oidc-server/pom.xml" />
       </set>
     </option>
   </component>
