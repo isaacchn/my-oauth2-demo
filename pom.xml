@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>openid-server</module>
+        <module>openid-login-client</module>
     </modules>
     <name>oauth2-demo</name>
     <description>oauth2-demo</description>

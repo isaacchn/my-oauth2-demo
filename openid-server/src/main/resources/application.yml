@@ -1,0 +1,6 @@
+server:
+  port: 19000
+
+logging:
+  level:
+    ROOT: debug

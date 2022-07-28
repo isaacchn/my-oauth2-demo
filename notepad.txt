@@ -1,3 +1,11 @@
 记事本
 
 https://docs.spring.io/spring-authorization-server/docs/current/reference/html/getting-started.html
+
+http://localhost:18070
+
+http://localhost:19000/oauth2/authorize?response_type=code&client_id=messaging-client&scope=openid%20profile&state=oqfC-MGIrtAsjTU6bY3mECZP188RCA28HR0XQO8-a0w%3D&redirect_uri=http://localhost:18070/login/oauth2/code/login-client&nonce=UYrp54a4BNAv1eUYqpC3l9wi1WcsOFx649MDk6HDBdw
+
+http://localhost:19000/.well-known/openid-configuration
+
+http and (tcp.dstport==18070 or tcp.dstport==19000 or tcp.srcport==18070 or tcp.srcport==19000)
