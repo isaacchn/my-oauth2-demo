@@ -9,3 +9,26 @@ http://localhost:19000/oauth2/authorize?response_type=code&client_id=messaging-c
 http://localhost:19000/.well-known/openid-configuration
 
 http and (tcp.dstport==18070 or tcp.dstport==19000 or tcp.srcport==18070 or tcp.srcport==19000)
+
+
+Spring Boot 2.x Property Mappings
+
+Spring Boot 2.x	                                                                           ClientRegistration
+----------------------------------------------------------------------------------------   ------------------------
+spring.security.oauth2.client.registration.[registrationId]                                registrationId
+spring.security.oauth2.client.registration.[registrationId].client-id                      clientId
+spring.security.oauth2.client.registration.[registrationId].client-secret                  clientSecret
+spring.security.oauth2.client.registration.[registrationId].client-authentication-method   clientAuthenticationMethod
+spring.security.oauth2.client.registration.[registrationId].authorization-grant-type       authorizationGrantType
+spring.security.oauth2.client.registration.[registrationId].redirect-uri                   redirectUri
+spring.security.oauth2.client.registration.[registrationId].scope                          scopes
+spring.security.oauth2.client.registration.[registrationId].client-name                    clientName
+spring.security.oauth2.client.provider.[providerId].authorization-uri                      providerDetails.authorizationUri
+spring.security.oauth2.client.provider.[providerId].token-uri                              providerDetails.tokenUri
+spring.security.oauth2.client.provider.[providerId].jwk-set-uri                            providerDetails.jwkSetUri
+spring.security.oauth2.client.provider.[providerId].issuer-uri                             providerDetails.issuerUri
+spring.security.oauth2.client.provider.[providerId].user-info-uri                          providerDetails.userInfoEndpoint.uri
+spring.security.oauth2.client.provider.[providerId].user-info-authentication-method        providerDetails.userInfoEndpoint.authenticationMethod
+spring.security.oauth2.client.provider.[providerId].user-name-attribute                    providerDetails.userInfoEndpoint.userNameAttributeName
+
+通过指定spring.security.oauth2.client.provider.[providerId].issuer-uri参数，ClientRegistration可以自动发现OpenID Connect提供方的的配置Endpoint或者认证服务器的元数据Endpoint。

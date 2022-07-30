@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Role;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
@@ -39,6 +40,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.UUID;
 
 @Configuration
+@EnableWebSecurity(debug = true)
 public class AuthServerConfig {
     @Bean
     @Order(1)
@@ -104,9 +106,14 @@ public class AuthServerConfig {
 //        return new JdbcOAuth2AuthorizationConsentService(jdbcTemplate, registeredClientRepository);
 //    }
 
+//    @Bean
+//    public JwtDecoder jwtDecoder(KeyPair keyPair) {
+//        return NimbusJwtDecoder.withPublicKey((RSAPublicKey) keyPair.getPublic()).build();
+//    }
+
     @Bean
-    public JwtDecoder jwtDecoder(KeyPair keyPair) {
-        return NimbusJwtDecoder.withPublicKey((RSAPublicKey) keyPair.getPublic()).build();
+    public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
+        return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
     }
 
     @Bean
@@ -126,6 +133,7 @@ public class AuthServerConfig {
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
         //An instance of com.nimbusds.jose.jwk.source.JWKSource for signing access tokens.
+        //The JWK Set endpoint is configured only if a JWKSource<SecurityContext> @Bean is registered.
         KeyPair keyPair = generateRsaKey();
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
         RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
