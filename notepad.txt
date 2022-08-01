@@ -32,3 +32,6 @@ spring.security.oauth2.client.provider.[providerId].user-info-authentication-met
 spring.security.oauth2.client.provider.[providerId].user-name-attribute                    providerDetails.userInfoEndpoint.userNameAttributeName
 
 通过指定spring.security.oauth2.client.provider.[providerId].issuer-uri参数，ClientRegistration可以自动发现OpenID Connect提供方的的配置Endpoint或者认证服务器的元数据Endpoint。
+
+OAuth2AuthorizationEndpointFilter
+this.authenticationFailureHandler.onAuthenticationFailure(request, response, ex);
