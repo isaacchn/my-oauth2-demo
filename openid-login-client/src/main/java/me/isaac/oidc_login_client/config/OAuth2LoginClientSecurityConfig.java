@@ -38,7 +38,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @EnableWebSecurity(debug = true)
 @Slf4j
-public class OAuth2LoginClientSecurityConfig{
+public class OAuth2LoginClientSecurityConfig {
     //覆盖SpringBoot Auto-configuration
     //OAuth2ClientAutoConfiguration
     //注册ClientRegistrationRepository @Bean composed of ClientRegistration(s) from the configured OAuth Client properties
@@ -46,50 +46,38 @@ public class OAuth2LoginClientSecurityConfig{
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().authenticated()
-                )
-                .oauth2Login(oauth2 -> oauth2.authorizationEndpoint(authorizationEndpointConfig -> authorizationEndpointConfig
-
-                                //.authorizationRequestResolver(authorizationRequestResolver(clientRegistrationRepository()))
-                                .authorizationRequestRepository(authorizationRequestRepository())
-                        )
-                )
-
-                .oauth2Client(oauth2 -> oauth2
-                                .clientRegistrationRepository(this.clientRegistrationRepository())
-                                .authorizationCodeGrant(codeGrant -> codeGrant
-                                        .accessTokenResponseClient(this.accessTokenResponseClient())
-                                )
-
-//                        .authorizedClientRepository(this.authorizedClientRepository())
-//                        .authorizedClientService(this.authorizedClientService())
-//                        .authorizationCodeGrant(codeGrant -> codeGrant
-//                                .authorizationRequestRepository(this.authorizationRequestRepository())
-//                                .authorizationRequestResolver(this.authorizationRequestResolver())
-//                                .accessTokenResponseClient(this.accessTokenResponseClient())
-//                        )
-                );
+        http.authorizeRequests()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .oauth2Login()
+                .authorizationEndpoint()
+                .authorizationRequestRepository(this.authorizationRequestRepository())
+                .authorizationRequestResolver(this.authorizationRequestResolver(this.clientRegistrationRepository()))
+                .and()
+                .tokenEndpoint()
+                .accessTokenResponseClient(this.accessTokenResponseClient())
+                .and()
+                .clientRegistrationRepository(this.clientRegistrationRepository());
         return http.build();
     }
 
-//    @Bean
-//    public OAuth2AuthorizedClientManager authorizedClientManager(
-//            ClientRegistrationRepository clientRegistrationRepository,
-//            OAuth2AuthorizedClientRepository authorizedClientRepository) {
-//
-//        OAuth2AuthorizedClientProvider authorizedClientProvider =
-//                OAuth2AuthorizedClientProviderBuilder.builder()
-//                        .clientCredentials()
-//                        .build();
-//
-//        DefaultOAuth2AuthorizedClientManager authorizedClientManager =
-//                new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository, authorizedClientRepository);
-//        authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
-//
-//        return authorizedClientManager;
-//    }
+    @Bean
+    public OAuth2AuthorizedClientManager authorizedClientManager(
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientRepository authorizedClientRepository) {
+
+        OAuth2AuthorizedClientProvider authorizedClientProvider =
+                OAuth2AuthorizedClientProviderBuilder.builder()
+                        .clientCredentials()
+                        .build();
+
+        DefaultOAuth2AuthorizedClientManager authorizedClientManager =
+                new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository, authorizedClientRepository);
+        authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
+
+        return authorizedClientManager;
+    }
 
     @Bean
     public ClientRegistrationRepository clientRegistrationRepository() {
@@ -115,39 +103,57 @@ public class OAuth2LoginClientSecurityConfig{
 
             @Override
             public OAuth2AccessTokenResponse getTokenResponse(OAuth2AuthorizationCodeGrantRequest authorizationGrantRequest) {
-                return client.getTokenResponse(authorizationGrantRequest);
+                log.info(">>> 拦截到获取Token调用请求");
+                log.info("request {}", authorizationGrantRequest.getAuthorizationExchange().getAuthorizationRequest().getAuthorizationRequestUri());
+                log.info("request {}", authorizationGrantRequest.getAuthorizationExchange().getAuthorizationRequest().getAuthorizationUri());
+                log.info("request {}", authorizationGrantRequest.getAuthorizationExchange().getAuthorizationRequest().getClientId());
+                log.info("request {}", authorizationGrantRequest.getAuthorizationExchange().getAuthorizationRequest().getRedirectUri());
+                log.info("request {}", String.join(",", authorizationGrantRequest.getAuthorizationExchange().getAuthorizationRequest().getScopes()));
+                OAuth2AccessTokenResponse tokenResponse = client.getTokenResponse(authorizationGrantRequest);
+                log.info("response access_token_value = {}", tokenResponse.getAccessToken().getTokenValue());
+                log.info("response access_token_type = {}", tokenResponse.getAccessToken().getTokenType());
+                log.info("response access_token_scopes = {}", String.join(",", tokenResponse.getAccessToken().getScopes()));
+                log.info("response refresh_token = {}", tokenResponse.getRefreshToken());
+                //log.info("response addition_params = {}", tokenResponse.getAdditionalParameters().values().stream().map(Object::toString).collect(Collectors.joining(",")));
+                log.info("response addition_params");
+                for (String key : tokenResponse.getAdditionalParameters().keySet()) {
+                    log.info("{} = {}", key, tokenResponse.getAdditionalParameters().get(key).toString());
+                }
+                log.info("<<< 结束");
+                return tokenResponse;
             }
         };
     }
 
-//    private OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
-//        InvocationHandler handler = new InvocationHandler() {
-//            final DefaultAuthorizationCodeTokenResponseClient client = new DefaultAuthorizationCodeTokenResponseClient();
-//
-//            @Override
-//            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-//
-//                if (method.getName().equals("getTokenResponse")) {
-//                    OAuth2AccessTokenResponse result = client.getTokenResponse((OAuth2AuthorizationCodeGrantRequest) args[0]);
-//                    return result;
-//                } else {
-//                    Class<?>[] parameterTypes = new Class<?>[args.length];
-//                    for (int i = 0; i < args.length; i++) {
-//                        parameterTypes[i] = args[i].getClass();
-//                    }
-//                    Method invokeMethod = client.getClass().getMethod(method.getName(), parameterTypes);
-//                    return invokeMethod.invoke(proxy, args);
-//                }
-//            }
-//        };
-//        OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> obj
-//                = (OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest>) Proxy.newProxyInstance(
-//                OAuth2AccessTokenResponseClient.class.getClassLoader(),
-//                new Class[]{OAuth2AccessTokenResponseClient.class},
-//                handler
-//        );
-//        return obj;
-//    }
+    private OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClientV2() {
+        //JDK代理模式写法
+        InvocationHandler handler = new InvocationHandler() {
+            final DefaultAuthorizationCodeTokenResponseClient client = new DefaultAuthorizationCodeTokenResponseClient();
+
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+
+                if (method.getName().equals("getTokenResponse")) {
+                    OAuth2AccessTokenResponse result = client.getTokenResponse((OAuth2AuthorizationCodeGrantRequest) args[0]);
+                    return result;
+                } else {
+                    Class<?>[] parameterTypes = new Class<?>[args.length];
+                    for (int i = 0; i < args.length; i++) {
+                        parameterTypes[i] = args[i].getClass();
+                    }
+                    Method invokeMethod = client.getClass().getMethod(method.getName(), parameterTypes);
+                    return invokeMethod.invoke(proxy, args);
+                }
+            }
+        };
+        OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> client
+                = (OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest>) Proxy.newProxyInstance(
+                OAuth2AccessTokenResponseClient.class.getClassLoader(),
+                new Class[]{OAuth2AccessTokenResponseClient.class},
+                handler
+        );
+        return client;
+    }
 
     private OAuth2AuthorizationRequestResolver authorizationRequestResolver(
             ClientRegistrationRepository clientRegistrationRepository) {
